@@ -64,7 +64,6 @@ def dictionaryWork(ip,d):
 				f.write("####################################################################### \n")
 
 def resetVars():
-        #print "Reset triggered"
         global d
         d = {}
         global ports
