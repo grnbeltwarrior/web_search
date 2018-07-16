@@ -5,8 +5,10 @@ import sys
 import os
 import subprocess
 
+new_buffer = 0
+f = open("web_search_output.txt", "w", new_buffer)
+
 def IPGet(line):
-        print "[+] IP address: "
         ip = line.split(" ")[5]
         ip = ip.strip("(")
         ip = ip.strip(")")
@@ -27,38 +29,39 @@ def doWork(old_ip, line):
         d[service] = ports
 
 def dictionaryWork(ip,d):
-        # searchsploit
-        # os.system("searchsploit -v --nmap %s" % xmlPath)
-        # print dictionary
         print "[+] Dictionary Keys for IP: " + str(ip)
         print d
         for serv in d:
-        # print "[+] Service: " + serv
                 ports = d[serv]
 	        if ("http" in serv) and ("https" not in serv):
         	        for port in ports:
                 	        print "[+] HTTP Port: " + port
 	                        port = port.split("/")[0]
-				print "Running Nikto and dirb Scan on : %s:%s" % (ip,port)
-	                        os.system("nikto -h http://%s:%s" % (ip, port))
-				os.system("dirb http://%s:%s -S" % (ip, port))
+				f.write("####################################################################### \n")
+				f.write("Running Nikto and dirb Scan on : %s:%s \n" % (ip,port))
+				subprocess.call(["nikto", "-h", "http://%s:%s" % (ip, port)], stdout=f)
+				subprocess.call(["dirb", "http://%s:%s" % (ip, port), "-S"], stdout=f)
+				f.write("####################################################################### \n")
 	        if ("https" in serv) or ("ssl/http" in serv):
         	        for port in ports:
                 	        print "[+] HTTPS Port: " + port
                         	port = port.split("/")[0]
-				print "Running Nikto and dirb Scan on : %s:%s" % (ip,port)
-                        	os.system("nikto -h https://%s:%s" % (ip, port))
-                        	os.system("dirb https://%s:%s -S" % (ip, port))
+				f.write("####################################################################### \n")
+				f.write("Running Nikto and dirb Scan on : %s:%s \n" % (ip,port))
+				subprocess.call(["nikto", "-h", "https://%s:%s" % (ip, port)], stdout=f)
+				subprocess.call(["dirb", "https://%s:%s" % (ip, port), "-S"], stdout=f)
+				f.write("####################################################################### \n")
 		if ("tcpwrapped" in serv) or ("possible_wls" in serv):
 			for port in ports:
 				print "[+] TCPWrapped Port: " + port
 				port = port.split("/")[0]
-				print "Running Nikto and dirb Scan on : %s:%s" % (ip,port)
-				os.system("nikto -h http://%s:%s" % (ip, port))
-                        	os.system("dirb http://%s:%s -S" % (ip, port))
-				os.system("nikto -h https://%s:%s" % (ip, port))
-                        	os.system("dirb https://%s:%s -S" % (ip, port))
-        print "\n"
+				f.write("####################################################################### \n")
+				f.write("Running Nikto and dirb Scan on : %s:%s \n" % (ip,port))
+				subprocess.call(["nikto", "-h", "http://%s:%s" % (ip, port)], stdout=f)
+				subprocess.call(["dirb", "http://%s:%s" % (ip, port), "-S"], stdout=f)
+				subprocess.call(["nikto", "-h", "https://%s:%s" % (ip, port)], stdout=f)
+				subprocess.call(["dirb", "https://%s:%s" % (ip, port), "-S"], stdout=f)
+				f.write("####################################################################### \n")
 
 def resetVars():
         #print "Reset triggered"
@@ -111,3 +114,6 @@ for line in file.readlines():
         else:
                 if ("/tcp" in line) and ("open" in line) and not ("Discovered" in line):
                         doWork(host_ip, line)
+
+file.close()
+f.close()
