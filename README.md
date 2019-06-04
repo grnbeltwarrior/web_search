@@ -1,3 +1,5 @@
+All of these lack stealth or slow and low style. They are loud and will cause attention.
+
 web_hammer.py - if you use Metasploit and export the services to a csv file, this will essentially bombard all the webish ports looking for 200 codes, following those redirects. Outputs all the urls to a txt file so you can use EyeWitness.py to do some fancy screenshots and reporting.
 
 web_search.py: Short script to run nikto and dirb against a list of hosts and open ports from an nmap file.
